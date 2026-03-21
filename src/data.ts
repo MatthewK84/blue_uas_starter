@@ -28,9 +28,14 @@ export interface Drone {
  *   short-term but significant capacity degradation. We model 15-18% for
  *   platforms rated to 49C+, 20% for those rated lower.
  *
- * Hybrid gas-electric (Skyfront, Edge Autonomy, K1000ULE):
+ * Hybrid gas-electric (Skyfront, Edge Autonomy):
  *   ~8-12% reduction. ICE engines lose some volumetric efficiency in thin
  *   hot air; generator output stable. Modeled at 10%.
+ *
+ * Solar-electric (K1000ULE):
+ *   ~12-15% reduction. Solar panels lose ~0.4%/C above 25C STC (~8% at 45C).
+ *   Stronger thermals in hot conditions partially offset. Battery degradation
+ *   adds ~5-7%. Modeled at 15%.
  *
  * Heavy-fuel turbine (V-BAT): ~5-8% reduction. JP-5 engines are designed
  *   for wide temp ranges. Modeled at 7%.
@@ -61,7 +66,7 @@ export const DRONES: Drone[] = [
   { id: 14, manufacturer: "Hoverfly Technologies", model: "Spectre", type: "Tethered", weight_lbs: 35, flight_time_min: 9999, max_speed_mph: 0, range_mi: 0, payload_lbs: 8, mission: "Persistent ISR", group: 2, tethered: true, desc: "First and only tethered UAS on Blue list. Unlimited flight time via tethered power. Persistent ISR, on-the-move ops, and variable height antenna deployment.", hot_endurance_min: 9999, hot_range_mi: 0, hot_speed_mph: 0, power_source: "Tethered AC", operating_temp_max_c: 50 },
   { id: 15, manufacturer: "Inspired Flight", model: "IF800", type: "Quadcopter", weight_lbs: 12, flight_time_min: 54, max_speed_mph: 49, range_mi: 10, payload_lbs: 6.6, mission: "Mapping / Inspection", group: 2, tethered: false, desc: "Foldable quadcopter with dual hot-swappable batteries. Universal payload interface for EO/IR, LiDAR, photogrammetry. IP43. Blue and Green UAS certified.", hot_endurance_min: 44, hot_range_mi: 8, hot_speed_mph: 46, power_source: "Battery", operating_temp_max_c: 45 },
   { id: 16, manufacturer: "Inspired Flight", model: "IF1200A", type: "Hexacopter", weight_lbs: 35, flight_time_min: 37, max_speed_mph: 40, range_mi: 8, payload_lbs: 18, mission: "Heavy Lift / Mapping", group: 2, tethered: false, desc: "Heavy-lift hexacopter for demanding enterprise missions. Payload-agnostic modular design. Blue and Green UAS certified.", hot_endurance_min: 30, hot_range_mi: 6.5, hot_speed_mph: 38, power_source: "Battery", operating_temp_max_c: 45 },
-  { id: 17, manufacturer: "Kraus Hamdani Aerospace", model: "K1000ULE", type: "Fixed Wing", weight_lbs: 55, flight_time_min: 480, max_speed_mph: 65, range_mi: 150, payload_lbs: 15, mission: "Long-Endurance ISR", group: 3, tethered: false, desc: "Ultra long-endurance fixed-wing for persistent wide-area surveillance. Large payload capacity for advanced ISR sensor packages.", hot_endurance_min: 432, hot_range_mi: 135, hot_speed_mph: 62, power_source: "Hybrid/Gas", operating_temp_max_c: 50 },
+  { id: 17, manufacturer: "Kraus Hamdani Aerospace", model: "K1000ULE", type: "Fixed Wing (Solar)", weight_lbs: 42.5, flight_time_min: 1440, max_speed_mph: 46, range_mi: 1000, payload_lbs: 7, mission: "Long-Endurance ISR", group: 3, tethered: false, desc: "Solar-electric ultra long-endurance fixed-wing. 24-hr operational endurance; demonstrated 26-hr non-stop with full payload. Endurance record of 75 hr 53 min. LiIon battery + solar array with folding prop for silent glide. AI-driven autonomous swarming. ATNE communications gateway for JADC2. Deployed with 1st MDTF across Pacific. Box-to-flight in 10 min. 20,000 ft ceiling.", hot_endurance_min: 1224, hot_range_mi: 850, hot_speed_mph: 44, power_source: "Solar-Electric", operating_temp_max_c: 50 },
   { id: 18, manufacturer: "ModalAI", model: "Seeker Vision FPV", type: "FPV Quadcopter", weight_lbs: 0.55, flight_time_min: 15, max_speed_mph: 50, range_mi: 2, payload_lbs: 0.2, mission: "FPV Recon", group: 1, tethered: false, desc: "Micro FPV reconnaissance drone with VOXL 2 autonomy. GPS-denied navigation. Extremely low SWaP.", hot_endurance_min: 13, hot_range_mi: 1.7, hot_speed_mph: 47, power_source: "Battery", operating_temp_max_c: 43 },
   { id: 19, manufacturer: "ModalAI", model: "Stinger Vision FPV", type: "FPV Quadcopter", weight_lbs: 0.35, flight_time_min: 12, max_speed_mph: 45, range_mi: 1.5, payload_lbs: 0.1, mission: "FPV Recon", group: 1, tethered: false, desc: "Ultra-lightweight FPV nano drone with AI vision. Indoor/outdoor with obstacle avoidance. Secure digital link.", hot_endurance_min: 10, hot_range_mi: 1.3, hot_speed_mph: 42, power_source: "Battery", operating_temp_max_c: 43 },
   { id: 20, manufacturer: "Mountain Horse Solutions", model: "Talon DT-300", type: "Quadcopter", weight_lbs: 20, flight_time_min: 45, max_speed_mph: 45, range_mi: 10, payload_lbs: 8, mission: "ISR / Delivery", group: 2, tethered: false, desc: "Rugged multi-rotor for ISR and tactical delivery. Designed for austere environment operations.", hot_endurance_min: 37, hot_range_mi: 8, hot_speed_mph: 42, power_source: "Battery", operating_temp_max_c: 45 },

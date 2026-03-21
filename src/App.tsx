@@ -435,15 +435,15 @@ function MissionPlannerTab() {
 
           {([
             { key: 'minEndurance', label: 'Min Endurance', min: 0, max: 480, step: 5,
-              fmt: (v: number) => v === 0 ? 'Any' : formatTime(v), marks: ['Any', '2h', '4h', '8h'] },
+              fmt: (v: number) => v === 0 ? 'Any' : formatTime(v), marks: ['Any', '2h', '4h', '6h', '8h'] },
             { key: 'maxWeight', label: 'Max Weight', min: 1, max: 200, step: 1,
-              fmt: (v: number) => v >= 200 ? 'Any' : `${v} lbs`, marks: ['1 lb', '20', '55', 'Any'] },
+              fmt: (v: number) => v >= 200 ? 'Any' : `${v} lbs`, marks: ['1 lb', '50', '100', '150', 'Any'] },
             { key: 'minRange', label: 'Min Range', min: 0, max: 200, step: 5,
-              fmt: (v: number) => v === 0 ? 'Any' : `${v} mi`, marks: ['Any', '25', '100', '200'] },
+              fmt: (v: number) => v === 0 ? 'Any' : `${v} mi`, marks: ['Any', '50', '100', '150', '200'] },
             { key: 'minPayload', label: 'Min Payload', min: 0, max: 40, step: 0.5,
-              fmt: (v: number) => v === 0 ? 'Any' : `${v} lbs`, marks: ['Any', '5', '20', '40'] },
+              fmt: (v: number) => v === 0 ? 'Any' : `${v} lbs`, marks: ['Any', '10', '20', '30', '40'] },
             { key: 'minSpeed', label: 'Min Speed', min: 0, max: 100, step: 5,
-              fmt: (v: number) => v === 0 ? 'Any' : `${v} mph`, marks: ['Any', '30', '60', '100'] },
+              fmt: (v: number) => v === 0 ? 'Any' : `${v} mph`, marks: ['Any', '25', '50', '75', '100'] },
           ] as const).map(s => (
             <div key={s.key} className="constraint-item">
               <div className="constraint-header">

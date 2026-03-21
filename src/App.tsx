@@ -555,7 +555,7 @@ export default function App() {
         <div><span className="status-dot" /><span className="status-label">DCMA Blue UAS Cleared List</span></div>
         <h1>Blue UAS Platform Explorer</h1>
         <p className="subtitle">
-          Complete specifications for all {DRONES.length} DoD-cleared drone platforms. NDAA-compliant, cyber-secure systems.
+          Specifications for {DRONES.length} DoD-cleared drone platforms. NDAA-compliant, cyber-secure systems.
         </p>
       </header>
 

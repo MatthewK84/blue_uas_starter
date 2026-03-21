@@ -331,9 +331,183 @@ function PerformanceTab() {
   );
 }
 
+/* Mission Planner Tab */
+const PRESETS: { name: string; desc: string; c: Partial<Constraints> }[] = [
+  { name: 'Dismounted ISR', desc: 'Under 10 lbs, 30+ min, backpack-portable',
+    c: { minEndurance: 30, maxWeight: 10, minRange: 1, groups: [1] } },
+  { name: 'Persistent Overwatch', desc: '4+ hours endurance, any weight class',
+    c: { minEndurance: 240, maxWeight: 200, minRange: 10 } },
+  { name: 'Gulf Region ISR', desc: '1+ hour at >45°C, VTOL, hot-rated',
+    c: { minEndurance: 60, maxWeight: 200, minRange: 5, requireVTOL: true, requireHotRated: true, useHotSpecs: true } },
+  { name: 'Mapping / Survey', desc: '45+ min, 10+ mi range, sensor payload',
+    c: { minEndurance: 45, maxWeight: 200, minRange: 10, minPayload: 1 } },
+  { name: 'FPV / Strike', desc: 'Group 1, 50+ mph, payload for munitions',
+    c: { minEndurance: 0, maxWeight: 10, minSpeed: 50, minPayload: 0.5, groups: [1] } },
+  { name: 'Heavy Lift', desc: '10+ lbs payload capacity',
+    c: { minEndurance: 0, maxWeight: 200, minPayload: 10 } },
+];
+
+interface Constraints {
+  minEndurance: number; maxWeight: number; minRange: number;
+  minPayload: number; minSpeed: number; requireVTOL: boolean;
+  requireHotRated: boolean; groups: number[]; useHotSpecs: boolean;
+}
+const DEFAULTS: Constraints = {
+  minEndurance: 0, maxWeight: 200, minRange: 0, minPayload: 0,
+  minSpeed: 0, requireVTOL: false, requireHotRated: false,
+  groups: [1, 2, 3], useHotSpecs: false,
+};
+
+function isVTOL(d: Drone): boolean {
+  const t = d.type.toLowerCase();
+  return t.includes('vtol') || t.includes('quad') || t.includes('coaxial')
+    || t.includes('multi-rotor') || t.includes('octo') || t.includes('hexa')
+    || t.includes('tethered') || t.includes('ducted') || t.includes('fpv');
+}
+
+function MissionPlannerTab() {
+  const [c, setC] = useState<Constraints>({ ...DEFAULTS });
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+  const up = (p: Partial<Constraints>) => setC(prev => ({ ...prev, ...p }));
+
+  const results = useMemo(() => {
+    return DRONES.filter(d => {
+      const en = c.useHotSpecs ? d.hot_endurance_min : d.flight_time_min;
+      const rn = c.useHotSpecs ? d.hot_range_mi : d.range_mi;
+      const sp = c.useHotSpecs ? d.hot_speed_mph : d.max_speed_mph;
+      if (en < c.minEndurance && !d.tethered) return false;
+      if (d.weight_lbs > c.maxWeight) return false;
+      if (rn < c.minRange && !d.tethered) return false;
+      if (d.payload_lbs < c.minPayload) return false;
+      if (sp < c.minSpeed && c.minSpeed > 0) return false;
+      if (c.requireVTOL && !isVTOL(d)) return false;
+      if (c.requireHotRated && d.operating_temp_max_c < 45) return false;
+      if (!c.groups.includes(d.group)) return false;
+      return true;
+    }).sort((a, b) => {
+      const ea = c.useHotSpecs ? a.hot_endurance_min : a.flight_time_min;
+      const eb = c.useHotSpecs ? b.hot_endurance_min : b.flight_time_min;
+      return eb - ea;
+    });
+  }, [c]);
+
+  const activeCount = [
+    c.minEndurance > 0, c.maxWeight < 200, c.minRange > 0,
+    c.minPayload > 0, c.minSpeed > 0, c.requireVTOL, c.requireHotRated,
+    c.groups.length < 3, c.useHotSpecs,
+  ].filter(Boolean).length;
+
+  function toggleGroup(g: number) {
+    const cur = c.groups;
+    if (cur.includes(g)) { if (cur.length > 1) up({ groups: cur.filter(x => x !== g) }); }
+    else up({ groups: [...cur, g] });
+  }
+
+  return (
+    <div className="planner-layout">
+      <div className="planner-sidebar">
+        <div className="planner-section">
+          <h3 className="planner-section-title">Mission Presets</h3>
+          <div className="preset-grid">
+            {PRESETS.map((p, i) => (
+              <button key={i} className="preset-btn" onClick={() => { setC({ ...DEFAULTS, ...p.c }); setExpandedId(null); }}>
+                <span className="preset-name">{p.name}</span>
+                <span className="preset-desc">{p.desc}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="planner-section">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h3 className="planner-section-title">Constraints</h3>
+            {activeCount > 0 && (
+              <button className="clear-btn" onClick={() => { setC({ ...DEFAULTS }); setExpandedId(null); }}>Clear all</button>
+            )}
+          </div>
+
+          <div className="constraint-toggle-box" style={{ background: c.useHotSpecs ? 'var(--red-light)' : 'var(--bg)', borderColor: c.useHotSpecs ? 'var(--red)' : 'var(--border)' }}>
+            <label className="toggle-label">
+              <input type="checkbox" checked={c.useHotSpecs} onChange={e => up({ useHotSpecs: e.target.checked })} />
+              <span className="toggle-text">Use &gt;45°C performance specs</span>
+            </label>
+            {c.useHotSpecs && <div className="toggle-hint">Filtering on hot-weather endurance, range, and speed</div>}
+          </div>
+
+          {([
+            { key: 'minEndurance', label: 'Min Endurance', min: 0, max: 480, step: 5,
+              fmt: (v: number) => v === 0 ? 'Any' : formatTime(v), marks: ['Any', '2h', '4h', '8h'] },
+            { key: 'maxWeight', label: 'Max Weight', min: 1, max: 200, step: 1,
+              fmt: (v: number) => v >= 200 ? 'Any' : `${v} lbs`, marks: ['1 lb', '20', '55', 'Any'] },
+            { key: 'minRange', label: 'Min Range', min: 0, max: 200, step: 5,
+              fmt: (v: number) => v === 0 ? 'Any' : `${v} mi`, marks: ['Any', '25', '100', '200'] },
+            { key: 'minPayload', label: 'Min Payload', min: 0, max: 40, step: 0.5,
+              fmt: (v: number) => v === 0 ? 'Any' : `${v} lbs`, marks: ['Any', '5', '20', '40'] },
+            { key: 'minSpeed', label: 'Min Speed', min: 0, max: 100, step: 5,
+              fmt: (v: number) => v === 0 ? 'Any' : `${v} mph`, marks: ['Any', '30', '60', '100'] },
+          ] as const).map(s => (
+            <div key={s.key} className="constraint-item">
+              <div className="constraint-header">
+                <span className="constraint-label">{s.label}</span>
+                <span className="constraint-value">{s.fmt(c[s.key] as number)}</span>
+              </div>
+              <input type="range" className="range-slider" min={s.min} max={s.max} step={s.step}
+                value={c[s.key] as number} onChange={e => up({ [s.key]: +e.target.value })} />
+              <div className="range-marks">{s.marks.map((m, i) => <span key={i}>{m}</span>)}</div>
+            </div>
+          ))}
+
+          <div className="constraint-item">
+            <div className="constraint-header"><span className="constraint-label">UAS Group</span></div>
+            <div className="group-toggles">
+              {[1, 2, 3].map(g => (
+                <button key={g} className={`group-toggle-btn g${g} ${c.groups.includes(g) ? 'active' : ''}`}
+                  onClick={() => toggleGroup(g)}>Group {g}</button>
+              ))}
+            </div>
+          </div>
+          <div className="constraint-item">
+            <label className="toggle-label">
+              <input type="checkbox" checked={c.requireVTOL} onChange={e => up({ requireVTOL: e.target.checked })} />
+              <span className="toggle-text">Require VTOL capability</span>
+            </label>
+          </div>
+          <div className="constraint-item">
+            <label className="toggle-label">
+              <input type="checkbox" checked={c.requireHotRated} onChange={e => up({ requireHotRated: e.target.checked })} />
+              <span className="toggle-text">Rated for ≥45°C operations</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div className="planner-results">
+        <div className="planner-results-header">
+          <h3>{results.length} platform{results.length !== 1 ? 's' : ''} match</h3>
+          <span className="active-filters">{activeCount} constraint{activeCount !== 1 ? 's' : ''} active</span>
+        </div>
+        {results.length === 0 ? (
+          <div className="planner-empty">
+            <div className="planner-empty-icon">∅</div>
+            <div className="planner-empty-text">No platforms match these constraints</div>
+            <div className="planner-empty-hint">Try relaxing your requirements or using a preset</div>
+          </div>
+        ) : (
+          <div className="drone-list">
+            {results.map((d, i) => (
+              <DroneCard key={d.id} drone={d} index={i}
+                isExpanded={expandedId === d.id}
+                onToggle={() => setExpandedId(expandedId === d.id ? null : d.id)} />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* Main App */
 export default function App() {
-  const [tab, setTab] = useState<'list' | 'graphics'>('list');
+  const [tab, setTab] = useState<'list' | 'graphics' | 'planner'>('list');
   const [search, setSearch] = useState('');
   const [sortKey, setSortKey] = useState('flight_desc');
   const [filterMission, setFilterMission] = useState('All');
@@ -388,6 +562,9 @@ export default function App() {
       <div className="tabs">
         <button className={`tab-btn ${tab === 'list' ? 'active' : ''}`} onClick={() => setTab('list')}>
           Platform Directory
+        </button>
+        <button className={`tab-btn ${tab === 'planner' ? 'active' : ''}`} onClick={() => setTab('planner')}>
+          Mission Planner
         </button>
         <button className={`tab-btn ${tab === 'graphics' ? 'active' : ''}`} onClick={() => setTab('graphics')}>
           Hot-Weather Performance
@@ -456,6 +633,8 @@ export default function App() {
       )}
 
       {tab === 'graphics' && <PerformanceTab />}
+
+      {tab === 'planner' && <MissionPlannerTab />}
 
       <footer className="app-footer">
         Blue UAS Cleared List — DCMA / Defense Innovation Unit<br />

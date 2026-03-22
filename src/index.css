@@ -719,16 +719,226 @@ body { background: var(--bg); color: var(--text-primary); font-family: 'Outfit',
 }
 
 /* ═══════════════════════════════════════════
- * RESPONSIVE
+ * RESPONSIVE — TABLET (≤768px)
  * ═══════════════════════════════════════════ */
 
 @media (max-width: 768px) {
-  .cascade-grid { flex-direction: column; }
-  .cascade-arrow { transform: rotate(90deg); }
-  .control-row { flex-direction: column; }
-  .chem-header, .chem-row { grid-template-columns: 1fr 1fr 1fr; font-size: 11px; }
-  .mat-header, .mat-row { grid-template-columns: 1fr 0.5fr 0.5fr 0.5fr; }
-  .mat-header span:nth-child(n+5), .mat-row span:nth-child(n+5) { display: none; }
+  .app-container { padding: 0 16px; }
+  .app-header h1 { font-size: 26px; }
+  .app-header .subtitle { font-size: 13px; }
+
+  /* Tabs: horizontal scroll instead of crush */
+  .tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-wrap: nowrap;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex: 0 0 auto;
+    font-size: 13px;
+    padding: 9px 14px;
+    white-space: nowrap;
+  }
+
+  /* Controls: stack selects */
+  .controls { gap: 8px; }
+  .search-wrap { flex: 1 1 100%; }
+  .filter-select { flex: 1 1 calc(50% - 4px); min-width: 0; }
+
+  /* Drone cards */
+  .drone-card { padding: 12px 14px; }
+
+  /* Stats: 2-up grid */
+  .stats-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .stat-card .stat-value { font-size: 18px; }
+
+  /* Component Physics: stack controls */
+  .control-row { flex-direction: column; gap: 16px; }
+  .control-group { min-width: 0; }
+
+  /* Cascade: vertical flow */
+  .cascade-grid {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 14px;
+    gap: 4px;
+  }
+  .cascade-card { min-width: 0; }
+  .cascade-arrow { transform: rotate(90deg); text-align: center; }
+
+  /* Chemistry table: drop 2 least-important columns */
+  .chem-header, .chem-row {
+    grid-template-columns: 1.4fr 1fr 0.8fr 0.8fr;
+    font-size: 11px;
+    gap: 6px;
+  }
+  .chem-header span:nth-child(2),
+  .chem-row span:nth-child(2),
+  .chem-header span:nth-child(5),
+  .chem-row span:nth-child(5) { display: none; }
+
+  /* Airframe materials table: hide UV + Best Use */
+  .mat-header, .mat-row {
+    grid-template-columns: 1.3fr 0.5fr 0.5fr 0.5fr 0.5fr;
+    gap: 4px;
+  }
+  .mat-header span:nth-child(5),
+  .mat-row span:nth-child(5),
+  .mat-header span:nth-child(6),
+  .mat-row span:nth-child(6) { display: none; }
+
+  /* Battery go/no-go: wrap */
+  .batt-gonogo { flex-wrap: wrap; gap: 10px; padding: 14px 16px; }
+  .gonogo-temp { margin-left: 0; flex-basis: 100%; }
+
+  /* Environment readouts: 2 columns */
+  .env-readouts { grid-template-columns: repeat(2, 1fr); }
+  .env-readout-value { font-size: 17px; }
+
+  /* Surface comparison: stack */
+  .surface-compare { flex-direction: column; gap: 8px; }
+  .surface-box { min-width: 0; }
+  .surface-vs { display: none; }
+
+  /* Chart cards: less padding */
+  .chart-card { padding: 16px; }
+
+  /* Spec grid: 2-column */
+  .spec-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+
+  /* Filament matrix */
   .fm-controls { flex-direction: column; }
-  .fm-legend-bar { flex-direction: column; gap: 12px; }
+  .fm-legend-bar { flex-direction: column; gap: 10px; padding: 10px 14px; }
+  .fm-legend-cubes { gap: 6px; }
+
+  /* Cascade result: smaller text */
+  .cascade-result-row { font-size: 12px; gap: 8px; }
+  .cascade-result-row.highlight { margin: 4px -16px; padding: 10px 16px; }
+
+  /* Chart tooltip: constrain width */
+  .custom-tooltip { max-width: 260px; }
+
+  /* Popup */
+  .drone-popup { padding: 14px; }
+
+  /* Footer */
+  .app-footer { font-size: 10px; padding: 20px 0 36px; }
 }
+
+/* ═══════════════════════════════════════════
+ * RESPONSIVE — LARGE PHONE (≤640px)
+ * ═══════════════════════════════════════════ */
+
+@media (max-width: 640px) {
+  .app-header h1 { font-size: 22px; }
+
+  /* Hide flight bar — not enough room alongside model name */
+  .flight-bar-track { display: none; }
+  .flight-time-display { min-width: 60px; }
+  .flight-time-display .value { font-size: 16px; }
+
+  /* Cascade cards: compact */
+  .cascade-big { font-size: 15px; }
+  .cascade-card { padding: 10px 12px; }
+
+  /* Cascade result: stack label above value */
+  .cascade-result-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 8px 0;
+  }
+  .cascade-result-row.highlight {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .cascade-result-val { font-size: 14px; }
+
+  /* Environment readouts: still 2-col but tighter */
+  .env-readout { padding: 10px 12px; }
+  .env-readout-value { font-size: 15px; }
+
+  /* Charts: shorter */
+  .recharts-wrapper { font-size: 10px; }
+
+  /* Battery go/no-go: tighter */
+  .gonogo-badge { padding: 5px 12px; font-size: 12px; }
+  .gonogo-desc { font-size: 13px; }
+
+  /* Section descriptions */
+  .section-desc { font-size: 12px; }
+}
+
+/* ═══════════════════════════════════════════
+ * RESPONSIVE — SMALL PHONE (≤480px)
+ * ═══════════════════════════════════════════ */
+
+@media (max-width: 480px) {
+  .app-container { padding: 0 12px; }
+  .app-header { padding: 24px 0 16px; }
+  .app-header h1 { font-size: 20px; }
+  .app-header .status-label { font-size: 9px; }
+
+  /* Tabs: even more compact */
+  .tab-btn { font-size: 12px; padding: 8px 10px; }
+
+  /* Stats: single column */
+  .stats-row { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .stat-card { padding: 12px 14px; }
+  .stat-card .stat-value { font-size: 16px; }
+
+  /* Filter selects: full width each */
+  .filter-select { flex: 1 1 100%; }
+
+  /* Drone cards: tighter */
+  .drone-card { padding: 10px 12px; }
+  .model-name { font-size: 14px; }
+  .mfr-name { font-size: 10px; }
+
+  /* Spec grid: single column */
+  .spec-grid { grid-template-columns: 1fr; }
+
+  /* Chemistry table: 3-column minimal */
+  .chem-header, .chem-row {
+    grid-template-columns: 1fr 0.7fr 0.7fr;
+    gap: 4px;
+    padding: 6px 8px;
+    font-size: 10px;
+  }
+  .chem-header span:nth-child(n+4),
+  .chem-row span:nth-child(n+4) { display: none; }
+
+  /* Airframe materials: 3 columns */
+  .mat-header, .mat-row {
+    grid-template-columns: 1.2fr 0.5fr 0.4fr;
+    padding: 6px 8px;
+    font-size: 10px;
+  }
+  .mat-header span:nth-child(n+4),
+  .mat-row span:nth-child(n+4) { display: none; }
+
+  /* Environment readouts: single column */
+  .env-readouts { grid-template-columns: 1fr; }
+
+  /* Mitigation items */
+  .mitigation-item { font-size: 12px; }
+
+  /* Chart cards */
+  .chart-card { padding: 12px; }
+  .chart-card h3 { font-size: 13px; }
+  .chart-card .chart-subtitle { font-size: 11px; }
+  .legend-row { gap: 12px; }
+  .legend-item { font-size: 11px; }
+
+  /* Graphics section */
+  .graphics-section h2,
+  .physics-tab h2,
+  .fm-tab h2 { font-size: 18px; }
+
+  /* Filament matrix legend: more compact */
+  .fm-legend-bar { padding: 8px 12px; }
+  .fm-legend-title { font-size: 9px; }
+}
+

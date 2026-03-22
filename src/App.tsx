@@ -42,7 +42,7 @@ function DroneCard({ drone, isExpanded, onToggle, index }: {
       style={{ animation: `fadeUp 0.35s ease ${index * 0.015}s both` }}>
       <div className="top-row">
         <GroupBadge group={drone.group} />
-        <div style={{ flex: 1, minWidth: 180 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
             <span className="model-name">{drone.model}</span>
             <span className="mfr-name">{drone.manufacturer}</span>

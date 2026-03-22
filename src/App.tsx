@@ -2,9 +2,11 @@ import { useState, useMemo } from 'react';
 import { DRONES, formatTime, type Drone } from './data';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  ScatterChart, Scatter, CartesianGrid, Cell, ZAxis
+  ScatterChart, Scatter, CartesianGrid, Cell, ZAxis,
+  type BarRectangleItem, type ScatterPointItem,
 } from 'recharts';
 import ComponentPhysicsTab from './ComponentPhysics';
+import MaterialMatrixTab from './MaterialMatrix';
 
 const MISSIONS = [...new Set(DRONES.map(d => d.mission))].sort();
 
@@ -87,7 +89,16 @@ function DroneCard({ drone, isExpanded, onToggle, index }: {
   );
 }
 
-function ChartTooltip({ active, payload }: any) {
+interface ChartTooltipPayloadEntry {
+  payload: Drone & { name?: string; x?: number; y?: number; z?: number };
+}
+
+interface ChartTooltipProps {
+  active?: boolean;
+  payload?: ChartTooltipPayloadEntry[];
+}
+
+function ChartTooltip({ active, payload }: ChartTooltipProps) {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload;
   return (
@@ -130,8 +141,9 @@ function PerformanceTab() {
 
   const gColors: Record<number, string> = { 1: '#0d9f6e', 2: '#1a6bff', 3: '#c47d0a' };
 
-  function handleBarClick(data: any) {
-    if (data?.id) { const drone = DRONES.find(d => d.id === data.id); if (drone) setSelectedDrone(drone); }
+  function handleBarClick(data: BarRectangleItem) {
+    const payload = data?.payload as Drone | undefined;
+    if (payload?.id) { const drone = DRONES.find(d => d.id === payload.id); if (drone) setSelectedDrone(drone); }
   }
 
   return (
@@ -226,7 +238,7 @@ function PerformanceTab() {
               <YAxis type="number" dataKey="y" tick={{ fontSize: 11, fill: '#8994a6' }} label={{ value: 'Hot Endurance (min)', angle: -90, position: 'insideLeft', fontSize: 11, fill: '#8994a6' }} />
               <ZAxis type="number" dataKey="z" range={[40, 400]} />
               <Tooltip content={<ChartTooltip />} />
-              <Scatter data={scatterData} cursor="pointer" onClick={(data: any) => { if (data?.id) { const dr = DRONES.find(dd => dd.id === data.id); if (dr) setSelectedDrone(dr); } }}>
+              <Scatter data={scatterData} cursor="pointer" onClick={(data: ScatterPointItem) => { const p = data?.payload as Drone | undefined; if (p?.id) { const dr = DRONES.find(dd => dd.id === p.id); if (dr) setSelectedDrone(dr); } }}>
                 {scatterData.map((d, i) => (<Cell key={i} fill={gColors[d.group] || '#8994a6'} fillOpacity={0.7} stroke={gColors[d.group]} strokeWidth={1} />))}
               </Scatter>
             </ScatterChart>
@@ -243,7 +255,7 @@ function PerformanceTab() {
 }
 
 export default function App() {
-  const [tab, setTab] = useState<'list' | 'graphics' | 'physics'>('list');
+  const [tab, setTab] = useState<'list' | 'graphics' | 'physics' | 'materials'>('list');
   const [search, setSearch] = useState('');
   const [sortKey, setSortKey] = useState('flight_desc');
   const [filterMission, setFilterMission] = useState('All');
@@ -251,7 +263,7 @@ export default function App() {
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   const filtered = useMemo(() => {
-    let list = DRONES.filter(d => {
+    const list = DRONES.filter(d => {
       const q = search.toLowerCase();
       const ms = !q || d.manufacturer.toLowerCase().includes(q) || d.model.toLowerCase().includes(q) || d.type.toLowerCase().includes(q) || d.mission.toLowerCase().includes(q);
       const mm = filterMission === 'All' || d.mission === filterMission;
@@ -292,6 +304,7 @@ export default function App() {
         <button className={`tab-btn ${tab === 'list' ? 'active' : ''}`} onClick={() => setTab('list')}>Platform Directory</button>
         <button className={`tab-btn ${tab === 'graphics' ? 'active' : ''}`} onClick={() => setTab('graphics')}>Hot-Weather Performance</button>
         <button className={`tab-btn ${tab === 'physics' ? 'active' : ''}`} onClick={() => setTab('physics')}>Component Physics</button>
+        <button className={`tab-btn ${tab === 'materials' ? 'active' : ''}`} onClick={() => setTab('materials')}>Filament Matrix</button>
       </div>
 
       {tab === 'list' && (
@@ -338,6 +351,7 @@ export default function App() {
 
       {tab === 'graphics' && <PerformanceTab />}
       {tab === 'physics' && <ComponentPhysicsTab />}
+      {tab === 'materials' && <MaterialMatrixTab />}
 
       <footer className="app-footer">
         Blue UAS Cleared List — DCMA / Defense Innovation Unit<br />

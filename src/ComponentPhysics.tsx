@@ -31,9 +31,21 @@ function densityAltitudeFt(tempC: number, elevM: number): number {
   return Math.round(daMeters * 3.281);
 }
 
+/**
+ * Tarmac / ground surface heat soak model.
+ * Light-colored surfaces (concrete, Cerakote white): minimum +20 °C above ambient.
+ * Dark-colored surfaces (asphalt, bare CF): minimum +30 °C above ambient.
+ * Above 35 °C ambient the delta grows with solar loading; the minimums are floors.
+ */
 function tarmacTemp(ambientC: number, surfaceColor: 'white' | 'black'): number {
-  const delta = surfaceColor === 'black' ? 30 + (ambientC - 30) * 0.3 : 10 + (ambientC - 30) * 0.1;
-  return Math.round(ambientC + Math.max(delta, surfaceColor === 'black' ? 20 : 8));
+  if (surfaceColor === 'black') {
+    // Dark / asphalt: floor of +30 °C, scales up with ambient
+    const delta = Math.max(30, 30 + (ambientC - 35) * 0.4);
+    return Math.round(ambientC + delta);
+  }
+  // Light / concrete: floor of +20 °C, scales modestly
+  const delta = Math.max(20, 20 + (ambientC - 35) * 0.2);
+  return Math.round(ambientC + delta);
 }
 
 function cuResistanceIncrease(windingTempC: number): number {
@@ -244,14 +256,14 @@ export default function ComponentPhysicsTab() {
             </div>
             <div className="control-group" style={{ flex: 1 }}>
               <div className="constraint-header">
-                <span className="constraint-label">Surface Color</span>
-                <span className="constraint-value">{surfaceColor === 'black' ? 'Dark/Asphalt' : 'White/Cerakote'}</span>
+                <span className="constraint-label">Surface Type</span>
+                <span className="constraint-value">{surfaceColor === 'black' ? 'Asphalt (Dark)' : 'Concrete (Light)'}</span>
               </div>
               <div className="group-toggles">
                 <button className={`group-toggle-btn ${surfaceColor === 'black' ? 'g3 active' : ''}`}
-                  onClick={() => setSurfaceColor('black')}>Dark</button>
+                  onClick={() => setSurfaceColor('black')}>Asphalt</button>
                 <button className={`group-toggle-btn ${surfaceColor === 'white' ? 'g1 active' : ''}`}
-                  onClick={() => setSurfaceColor('white')}>White</button>
+                  onClick={() => setSurfaceColor('white')}>Concrete</button>
               </div>
             </div>
           </div>
@@ -262,7 +274,7 @@ export default function ComponentPhysicsTab() {
           {[
             { l: 'Air Density', v: `${rho.toFixed(3)} kg/m³`, sub: `${((1 - rho / ISA_DENSITY) * 100).toFixed(1)}% below ISA`, warn: rho < 1.05 },
             { l: 'Density Altitude', v: `${da.toLocaleString()} ft`, sub: elevLabel, warn: da > 4000 },
-            { l: 'Tarmac Surface', v: `${tarmac}°C / ${Math.round(tarmac * 9 / 5 + 32)}°F`, sub: `${surfaceColor} surface`, warn: tarmac > 70 },
+            { l: 'Tarmac Surface', v: `${tarmac}°C / ${Math.round(tarmac * 9 / 5 + 32)}°F`, sub: surfaceColor === 'black' ? `Asphalt (+${tarmac - ambientC}°C soak)` : `Concrete (+${tarmac - ambientC}°C soak)`, warn: tarmac > 70 },
             { l: 'Motor Winding Est.', v: `${winding}°C`, sub: 'Ambient + 70°C rise', warn: winding > 110 },
           ].map((r, i) => (
             <div key={i} className={`env-readout ${r.warn ? 'warn' : ''}`}>
@@ -541,18 +553,19 @@ export default function ComponentPhysicsTab() {
             <h3>Surface Protection Imperative</h3>
             <div className="surface-compare">
               <div className="surface-box black">
-                <div className="surface-label">Black Surface</div>
-                <div className="surface-delta">+{Math.round(ambientC * 0.75)}°C above ambient</div>
-                <div className="surface-temp">{Math.round(ambientC + ambientC * 0.75)}°C surface</div>
+                <div className="surface-label">Dark / Asphalt</div>
+                <div className="surface-delta">+{tarmacTemp(ambientC, 'black') - ambientC}°C above ambient</div>
+                <div className="surface-temp">{tarmacTemp(ambientC, 'black')}°C surface</div>
               </div>
               <div className="surface-vs">vs</div>
               <div className="surface-box white">
-                <div className="surface-label">White / Cerakote</div>
-                <div className="surface-delta">+~10°C above ambient</div>
-                <div className="surface-temp">{ambientC + 10}°C surface</div>
+                <div className="surface-label">Light / Concrete</div>
+                <div className="surface-delta">+{tarmacTemp(ambientC, 'white') - ambientC}°C above ambient</div>
+                <div className="surface-temp">{tarmacTemp(ambientC, 'white')}°C surface</div>
               </div>
             </div>
             <p className="surface-note">
+              Dark surfaces (asphalt) soak ≥30 °C above ambient; light surfaces (concrete, Cerakote white) soak ≥20 °C above ambient.
               Every sUAS for Middle East operations must be white or light silver.
               Cerakote ceramic-polymer coatings at 12–25 µm deliver UV stability exceeding 1,000 hrs QUV weathering.
             </p>

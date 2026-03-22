@@ -2,7 +2,7 @@
 
 # Blue UAS Platform Explorer
 
-**Interactive specifications browser and thermal engineering toolkit for all 42 DoD Blue UAS Cleared List drone platforms.**
+**Interactive specifications browser and thermal engineering toolkit for 42 DoD Blue UAS Cleared List drone platforms.**
 
 [![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=white)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
@@ -26,16 +26,16 @@ Blue UAS Platform Explorer is a single-page application for browsing, filtering,
 The application ships four feature tabs, each designed for a different operational planning context:
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                     Blue UAS Platform Explorer                      │
+┌────────────────────────────────────────────────────────────────────┐
+│                     Blue UAS Platform Explorer                     │
 ├──────────────┬──────────────────┬────────────────┬─────────────────┤
 │  Platform    │  Hot-Weather     │  Component     │  Filament       │
 │  Directory   │  Performance     │  Physics       │  Matrix         │
 ├──────────────┴──────────────────┴────────────────┴─────────────────┤
-│                                                                     │
+│                                                                    │
 │  42 platforms · 3 UAS groups · 14 mission types · 18 data fields   │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
+│                                                                    │
+└────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -44,7 +44,7 @@ The application ships four feature tabs, each designed for a different operation
 
 ### Tab 1 — Platform Directory
 
-The full Blue UAS Cleared List in a searchable, sortable interface.
+The Blue UAS Cleared List in a searchable, sortable interface.
 
 | Capability | Detail |
 |:---|:---|
@@ -98,7 +98,7 @@ Component Physics
     └── Black vs white surface temperature comparison
 ```
 
-**Physics models implemented:**
+**Physics Model:**
 
 | Function | Source | Formula / Basis |
 |:---|:---|:---|
@@ -118,7 +118,7 @@ Component Physics
 
 ### Tab 4 — Filament Matrix
 
-Comprehensive comparison matrix for 30 FDM/FFF 3D printing filaments.
+Comparison matrix for 30 FDM/FFF 3D printing filaments.
 
 | Feature | Detail |
 |:---|:---|

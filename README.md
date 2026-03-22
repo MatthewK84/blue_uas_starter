@@ -283,6 +283,6 @@ Serves on [http://localhost:3000](http://localhost:3000) (or `$PORT` on Railway)
 
 **Blue UAS Cleared List — DCMA / Defense Innovation Unit**
 
-All 42 platforms NDAA-compliant and validated as cyber-secure.
+Platforms NDAA-compliant and validated as cyber-secure.
 
 </div>

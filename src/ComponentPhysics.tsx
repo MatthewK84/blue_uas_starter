@@ -33,19 +33,61 @@ function densityAltitudeFt(tempC: number, elevM: number): number {
 
 /**
  * Tarmac / ground surface heat soak model.
- * Light-colored surfaces (concrete, Cerakote white): minimum +20 °C above ambient.
- * Dark-colored surfaces (asphalt, bare CF): minimum +30 °C above ambient.
- * Above 35 °C ambient the delta grows with solar loading; the minimums are floors.
+ *
+ * Based on field measurement data:
+ *
+ * ASPHALT (dark, albedo 0.05–0.15):
+ *   Absorbs 85–95% of solar energy. Surfaces often reach 60–80°C when ambient
+ *   exceeds 35°C. Recorded 74°C at 49°C ambient (166°F at 120°F). Typically
+ *   20–30°C above air temperature in full sun after hours of heat soak.
+ *
+ * CONCRETE (light gray, albedo 0.25–0.40):
+ *   Reflects 20–40% of solar energy. Surfaces typically reach 50–65°C when
+ *   ambient exceeds 35°C. Recorded 62°C in similar extreme conditions.
+ *   Typically 15–25°C above air temperature in full sun.
+ *
+ * Difference: asphalt runs 10–25°C hotter than adjacent concrete under
+ * identical conditions (field measurement: 63°C asphalt vs 51°C concrete curb).
+ *
+ * Below 35°C ambient, solar loading is lower and deltas are smaller.
  */
-function tarmacTemp(ambientC: number, surfaceColor: 'white' | 'black'): number {
-  if (surfaceColor === 'black') {
-    // Dark / asphalt: floor of +30 °C, scales up with ambient
-    const delta = Math.max(30, 30 + (ambientC - 35) * 0.4);
-    return Math.round(ambientC + delta);
+
+interface HeatSoakEntry {
+  ambient: number;
+  asphaltDelta: number;
+  concreteDelta: number;
+}
+
+const HEAT_SOAK_TABLE: HeatSoakEntry[] = [
+  { ambient: 0,  asphaltDelta: 3,  concreteDelta: 2 },
+  { ambient: 15, asphaltDelta: 8,  concreteDelta: 5 },
+  { ambient: 20, asphaltDelta: 12, concreteDelta: 8 },
+  { ambient: 30, asphaltDelta: 18, concreteDelta: 12 },
+  { ambient: 40, asphaltDelta: 23, concreteDelta: 17 },
+  { ambient: 45, asphaltDelta: 26, concreteDelta: 19 },
+  { ambient: 50, asphaltDelta: 28, concreteDelta: 20 },
+];
+
+function interpolateHeatSoak(tempC: number, surface: 'asphalt' | 'concrete'): number {
+  const key = surface === 'asphalt' ? 'asphaltDelta' : 'concreteDelta';
+  const table = HEAT_SOAK_TABLE;
+
+  if (tempC <= table[0].ambient) return table[0][key];
+  if (tempC >= table[table.length - 1].ambient) return table[table.length - 1][key];
+
+  for (let i = 0; i < table.length - 1; i += 1) {
+    const lo = table[i];
+    const hi = table[i + 1];
+    if (tempC >= lo.ambient && tempC <= hi.ambient) {
+      const ratio = (tempC - lo.ambient) / (hi.ambient - lo.ambient);
+      return Math.round(lo[key] + ratio * (hi[key] - lo[key]));
+    }
   }
-  // Light / concrete: floor of +20 °C, scales modestly
-  const delta = Math.max(20, 20 + (ambientC - 35) * 0.2);
-  return Math.round(ambientC + delta);
+  return table[table.length - 1][key];
+}
+
+function tarmacTemp(ambientC: number, surfaceType: 'asphalt' | 'concrete'): number {
+  return ambientC + interpolateHeatSoak(ambientC, surfaceType);
 }
 
 function cuResistanceIncrease(windingTempC: number): number {
@@ -158,13 +200,24 @@ function PhysicsTooltip({ active, payload, label }: { active?: boolean; payload?
 export default function ComponentPhysicsTab() {
   const [ambientC, setAmbientC] = useState(45);
   const [elevM, setElevM] = useState(0);
-  const [surfaceColor, setSurfaceColor] = useState<'white' | 'black'>('black');
+  const [surfaceType, setSurfaceType] = useState<'asphalt' | 'concrete'>('asphalt');
   const [activeSection, setActiveSection] = useState<'propulsion' | 'battery' | 'airframe'>('propulsion');
+
+  /* Preset temperature options */
+  const TEMP_PRESETS = [
+    { value: 0,  label: '0°C',  labelF: '32°F',  desc: 'Freezing' },
+    { value: 15, label: '15°C', labelF: '59°F',  desc: 'ISA Std' },
+    { value: 20, label: '20°C', labelF: '68°F',  desc: 'Mild' },
+    { value: 30, label: '30°C', labelF: '86°F',  desc: 'Warm' },
+    { value: 40, label: '40°C', labelF: '104°F', desc: 'Hot' },
+    { value: 45, label: '45°C', labelF: '113°F', desc: 'Extreme' },
+    { value: 50, label: '50°C', labelF: '122°F', desc: '50+' },
+  ] as const;
 
   /* Computed values */
   const rho = airDensity(ambientC, elevM);
   const da = densityAltitudeFt(ambientC, elevM);
-  const tarmac = tarmacTemp(ambientC, surfaceColor);
+  const tarmac = tarmacTemp(ambientC, surfaceType);
   const winding = motorWindingTemp(ambientC);
   const cuR = cuResistanceIncrease(winding);
   const flux = ndfebFluxLoss(winding);
@@ -236,10 +289,15 @@ export default function ComponentPhysicsTab() {
                   color: ambientC >= 50 ? '#991b1b' : ambientC >= 45 ? '#d6336c' : ambientC >= 35 ? '#c47d0a' : '#0d9f6e'
                 }}>{ambientC}°C / {Math.round(ambientC * 9 / 5 + 32)}°F</span>
               </div>
-              <input type="range" className="range-slider" min={15} max={55} step={1}
-                value={ambientC} onChange={e => setAmbientC(+e.target.value)} />
-              <div className="range-marks">
-                <span>15°C ISA</span><span>30°C</span><span>45°C</span><span>55°C</span>
+              <div className="temp-presets">
+                {TEMP_PRESETS.map(p => (
+                  <button key={p.value}
+                    className={`temp-preset-btn ${ambientC === p.value ? 'active' : ''} ${p.value >= 45 ? 'hot' : p.value >= 35 ? 'warm' : ''}`}
+                    onClick={() => setAmbientC(p.value)}>
+                    <span className="temp-preset-deg">{p.label}</span>
+                    <span className="temp-preset-desc">{p.desc}</span>
+                  </button>
+                ))}
               </div>
             </div>
             <div className="control-group" style={{ flex: 1 }}>
@@ -257,13 +315,13 @@ export default function ComponentPhysicsTab() {
             <div className="control-group" style={{ flex: 1 }}>
               <div className="constraint-header">
                 <span className="constraint-label">Surface Type</span>
-                <span className="constraint-value">{surfaceColor === 'black' ? 'Asphalt (Dark)' : 'Concrete (Light)'}</span>
+                <span className="constraint-value">{surfaceType === 'asphalt' ? 'Asphalt (Dark)' : 'Concrete (Light)'}</span>
               </div>
               <div className="group-toggles">
-                <button className={`group-toggle-btn ${surfaceColor === 'black' ? 'g3 active' : ''}`}
-                  onClick={() => setSurfaceColor('black')}>Asphalt</button>
-                <button className={`group-toggle-btn ${surfaceColor === 'white' ? 'g1 active' : ''}`}
-                  onClick={() => setSurfaceColor('white')}>Concrete</button>
+                <button className={`group-toggle-btn ${surfaceType === 'asphalt' ? 'g3 active' : ''}`}
+                  onClick={() => setSurfaceType('asphalt')}>Asphalt</button>
+                <button className={`group-toggle-btn ${surfaceType === 'concrete' ? 'g1 active' : ''}`}
+                  onClick={() => setSurfaceType('concrete')}>Concrete</button>
               </div>
             </div>
           </div>
@@ -274,7 +332,7 @@ export default function ComponentPhysicsTab() {
           {[
             { l: 'Air Density', v: `${rho.toFixed(3)} kg/m³`, sub: `${((1 - rho / ISA_DENSITY) * 100).toFixed(1)}% below ISA`, warn: rho < 1.05 },
             { l: 'Density Altitude', v: `${da.toLocaleString()} ft`, sub: elevLabel, warn: da > 4000 },
-            { l: 'Tarmac Surface', v: `${tarmac}°C / ${Math.round(tarmac * 9 / 5 + 32)}°F`, sub: surfaceColor === 'black' ? `Asphalt (+${tarmac - ambientC}°C soak)` : `Concrete (+${tarmac - ambientC}°C soak)`, warn: tarmac > 70 },
+            { l: 'Tarmac Surface', v: `${tarmac}°C / ${Math.round(tarmac * 9 / 5 + 32)}°F`, sub: `${surfaceType === 'asphalt' ? 'Asphalt' : 'Concrete'} (+${tarmac - ambientC}°C soak)`, warn: tarmac > 60 },
             { l: 'Motor Winding Est.', v: `${winding}°C`, sub: 'Ambient + 70°C rise', warn: winding > 110 },
           ].map((r, i) => (
             <div key={i} className={`env-readout ${r.warn ? 'warn' : ''}`}>
@@ -550,24 +608,25 @@ export default function ComponentPhysicsTab() {
 
           {/* Surface color imperative */}
           <div className="mitigation-card">
-            <h3>Surface Protection Imperative</h3>
+            <h3>Surface Heat Soak Comparison</h3>
             <div className="surface-compare">
               <div className="surface-box black">
-                <div className="surface-label">Dark / Asphalt</div>
-                <div className="surface-delta">+{tarmacTemp(ambientC, 'black') - ambientC}°C above ambient</div>
-                <div className="surface-temp">{tarmacTemp(ambientC, 'black')}°C surface</div>
+                <div className="surface-label">Asphalt (Albedo 0.05–0.15)</div>
+                <div className="surface-delta">+{tarmacTemp(ambientC, 'asphalt') - ambientC}°C above ambient</div>
+                <div className="surface-temp">{tarmacTemp(ambientC, 'asphalt')}°C surface</div>
               </div>
               <div className="surface-vs">vs</div>
               <div className="surface-box white">
-                <div className="surface-label">Light / Concrete</div>
-                <div className="surface-delta">+{tarmacTemp(ambientC, 'white') - ambientC}°C above ambient</div>
-                <div className="surface-temp">{tarmacTemp(ambientC, 'white')}°C surface</div>
+                <div className="surface-label">Concrete (Albedo 0.25–0.40)</div>
+                <div className="surface-delta">+{tarmacTemp(ambientC, 'concrete') - ambientC}°C above ambient</div>
+                <div className="surface-temp">{tarmacTemp(ambientC, 'concrete')}°C surface</div>
               </div>
             </div>
             <p className="surface-note">
-              Dark surfaces (asphalt) soak ≥30 °C above ambient; light surfaces (concrete, Cerakote white) soak ≥20 °C above ambient.
-              Every sUAS for Middle East operations must be white or light silver.
-              Cerakote ceramic-polymer coatings at 12–25 µm deliver UV stability exceeding 1,000 hrs QUV weathering.
+              Asphalt absorbs 85–95% of solar energy; at {ambientC}°C ambient, surfaces reach {tarmacTemp(ambientC, 'asphalt')}°C after hours of heat soak.
+              Concrete reflects 20–40%, staying {tarmacTemp(ambientC, 'asphalt') - tarmacTemp(ambientC, 'concrete')}°C cooler at {tarmacTemp(ambientC, 'concrete')}°C.
+              {ambientC >= 35 && ' Every sUAS for hot-climate operations must be white or light silver.'}
+              {ambientC >= 35 && ' Cerakote ceramic-polymer coatings (12–25 µm) deliver UV stability exceeding 1,000 hrs QUV weathering.'}
             </p>
           </div>
         </div>

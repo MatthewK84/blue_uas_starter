@@ -154,6 +154,61 @@ body { background: var(--bg); color: var(--text-primary); font-family: 'Outfit',
 .control-row { display: flex; gap: 24px; flex-wrap: wrap; }
 .control-group { min-width: 160px; }
 
+/* Temperature preset radio buttons */
+.temp-presets {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.temp-preset-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 8px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'Outfit', sans-serif;
+  flex: 1;
+  min-width: 54px;
+}
+.temp-preset-btn:hover {
+  border-color: var(--text-tertiary);
+  background: var(--surface);
+}
+.temp-preset-btn.active {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+.temp-preset-btn.active.warm {
+  border-color: var(--amber);
+  background: var(--amber-light);
+}
+.temp-preset-btn.active.hot {
+  border-color: var(--red);
+  background: var(--red-light);
+}
+.temp-preset-deg {
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+.temp-preset-btn.active .temp-preset-deg { color: var(--accent); }
+.temp-preset-btn.active.warm .temp-preset-deg { color: var(--amber); }
+.temp-preset-btn.active.hot .temp-preset-deg { color: var(--red); }
+.temp-preset-desc {
+  font-size: 9px;
+  color: var(--text-tertiary);
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 /* Environment readouts */
 .env-readouts {
   display: grid;
@@ -758,6 +813,10 @@ body { background: var(--bg); color: var(--text-primary); font-family: 'Outfit',
   .control-row { flex-direction: column; gap: 16px; }
   .control-group { min-width: 0; }
 
+  /* Temp presets: wrap to two rows on tablet */
+  .temp-presets { gap: 4px; }
+  .temp-preset-btn { padding: 6px 8px; min-width: 48px; }
+
   /* Cascade: vertical flow */
   .cascade-grid {
     flex-direction: column;
@@ -891,6 +950,12 @@ body { background: var(--bg); color: var(--text-primary); font-family: 'Outfit',
 
   /* Filter selects: full width each */
   .filter-select { flex: 1 1 100%; }
+
+  /* Temp presets: compact grid for small screens */
+  .temp-presets { gap: 3px; }
+  .temp-preset-btn { padding: 5px 4px; min-width: 40px; }
+  .temp-preset-deg { font-size: 11px; }
+  .temp-preset-desc { font-size: 8px; }
 
   /* Drone cards: tighter */
   .drone-card { padding: 10px 12px; }

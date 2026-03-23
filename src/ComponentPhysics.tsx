@@ -135,10 +135,10 @@ function hoverPowerEscalation(ambientC: number, elevM: number): {
 }
 
 function batteryStatus(tempC: number): { label: string; color: string; desc: string } {
-  if (tempC < 30) return { label: 'GO', color: '#0d9f6e', desc: 'Proceed to launch' };
-  if (tempC < 50) return { label: 'COOL DOWN', color: '#c47d0a', desc: 'DC cooler + shade. Target 25°C' };
-  if (tempC < 55) return { label: 'DERATE', color: '#d6336c', desc: '25% endurance penalty. Cool before charging' };
-  return { label: 'NO-GO', color: '#991b1b', desc: 'Do not fly. Immediate cooling required' };
+  if (tempC < 30) return { label: 'GO', color: '#2dd4a0', desc: 'Proceed to launch' };
+  if (tempC < 50) return { label: 'COOL DOWN', color: '#f0a030', desc: 'DC cooler + shade. Target 25°C' };
+  if (tempC < 55) return { label: 'DERATE', color: '#f0506e', desc: '25% endurance penalty. Cool before charging' };
+  return { label: 'NO-GO', color: '#ff6b6b', desc: 'Do not fly. Immediate cooling required' };
 }
 
 function cycleLife(tempC: number): { lipo: number; liion: number; lifepo4: number } {
@@ -168,9 +168,9 @@ interface PolymerMaterial {
 }
 
 const MATERIALS: PolymerMaterial[] = [
-  { name: 'PLA', tg: 60, hdt: null, uv: 'Poor', process: 'FDM', use: 'PROHIBITED', color: '#ef4444' },
+  { name: 'PLA', tg: 60, hdt: null, uv: 'Poor', process: 'FDM', use: 'PROHIBITED', color: '#f0506e' },
   { name: 'PETG / PETG-CF', tg: 80, hdt: 70, uv: 'Fair', process: 'FDM', use: 'PROHIBITED', color: '#f97316' },
-  { name: 'ASA', tg: 100, hdt: 98, uv: 'Best', process: 'FDM', use: 'Sun-exposed surfaces, nacelles', color: '#0d9f6e' },
+  { name: 'ASA', tg: 100, hdt: 98, uv: 'Best', process: 'FDM', use: 'Sun-exposed surfaces, nacelles', color: '#2dd4a0' },
   { name: 'GF-Nylon', tg: 95, hdt: 110, uv: 'Fair', process: 'FDM', use: 'Payload bays (RF-transparent)', color: '#1a6bff' },
   { name: 'PA12-CF (ann.)', tg: 108, hdt: 131, uv: 'Fair', process: 'FDM', use: 'Spars, structural members, booms', color: '#6366f1' },
   { name: 'PC / PC-CF', tg: 147, hdt: 150, uv: 'Poor', process: 'FDM', use: 'Motor mounts, high-heat zones', color: '#8b5cf6' },
@@ -286,7 +286,7 @@ export default function ComponentPhysicsTab() {
               <div className="constraint-header">
                 <span className="constraint-label">Ambient Temperature</span>
                 <span className="constraint-value" style={{
-                  color: ambientC >= 50 ? '#991b1b' : ambientC >= 45 ? '#d6336c' : ambientC >= 35 ? '#c47d0a' : '#0d9f6e'
+                  color: ambientC >= 50 ? '#ff6b6b' : ambientC >= 45 ? '#f0506e' : ambientC >= 35 ? '#f0a030' : '#2dd4a0'
                 }}>{ambientC}°C / {Math.round(ambientC * 9 / 5 + 32)}°F</span>
               </div>
               <div className="temp-presets">
@@ -400,11 +400,11 @@ export default function ComponentPhysicsTab() {
             </div>
             <div className="cascade-result-row">
               <span>Power increase (n³ scaling) for thrust recovery</span>
-              <span className="cascade-result-val" style={{ color: powerUp > 15 ? '#d6336c' : '#c47d0a' }}>+{powerUp.toFixed(1)}%</span>
+              <span className="cascade-result-val" style={{ color: powerUp > 15 ? '#f0506e' : '#f0a030' }}>+{powerUp.toFixed(1)}%</span>
             </div>
             <div className="cascade-result-row highlight">
               <span>Total hover power demand increase</span>
-              <span className="cascade-result-val" style={{ color: hover.total > 30 ? '#991b1b' : '#d6336c', fontSize: 18 }}>+{hover.total}%</span>
+              <span className="cascade-result-val" style={{ color: hover.total > 30 ? '#ff6b6b' : '#f0506e', fontSize: 18 }}>+{hover.total}%</span>
             </div>
             <div className="cascade-result-row">
               <span>Recommended motor derate</span>
@@ -412,7 +412,7 @@ export default function ComponentPhysicsTab() {
             </div>
             <div className="cascade-result-row">
               <span>Hover endurance multiplier</span>
-              <span className="cascade-result-val" style={{ color: endMult < 0.7 ? '#991b1b' : '#d6336c' }}>×{endMult.toFixed(2)}</span>
+              <span className="cascade-result-val" style={{ color: endMult < 0.7 ? '#ff6b6b' : '#f0506e' }}>×{endMult.toFixed(2)}</span>
             </div>
           </div>
 
@@ -422,24 +422,24 @@ export default function ComponentPhysicsTab() {
             <p className="chart-subtitle">Stacked component contributions to total power increase</p>
             <ResponsiveContainer width="100%" height={320}>
               <AreaChart data={degradationCurve} margin={{ left: 10, right: 20, top: 10, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#eef1f5" />
-                <XAxis dataKey="temp" tick={{ fontSize: 11, fill: '#8994a6' }}
-                  label={{ value: 'Ambient °C', position: 'insideBottom', offset: -2, fontSize: 11, fill: '#8994a6' }} />
-                <YAxis tick={{ fontSize: 11, fill: '#8994a6' }}
-                  label={{ value: '% Increase', angle: -90, position: 'insideLeft', fontSize: 11, fill: '#8994a6' }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#1e2a38" />
+                <XAxis dataKey="temp" tick={{ fontSize: 11, fill: '#556272' }}
+                  label={{ value: 'Ambient °C', position: 'insideBottom', offset: -2, fontSize: 11, fill: '#556272' }} />
+                <YAxis tick={{ fontSize: 11, fill: '#556272' }}
+                  label={{ value: '% Increase', angle: -90, position: 'insideLeft', fontSize: 11, fill: '#556272' }} />
                 <Tooltip content={<PhysicsTooltip />} />
-                <ReferenceLine x={ambientC} stroke="#1a2332" strokeDasharray="4 4" strokeWidth={2} />
-                <Area type="monotone" dataKey="aero" stackId="1" name="Aerodynamic" fill="#1a6bff" fillOpacity={0.3} stroke="#1a6bff" />
-                <Area type="monotone" dataKey="motor" stackId="1" name="Motor I²R" fill="#d6336c" fillOpacity={0.3} stroke="#d6336c" />
-                <Area type="monotone" dataKey="esc_batt" stackId="1" name="ESC + Battery" fill="#c47d0a" fillOpacity={0.3} stroke="#c47d0a" />
-                <Line type="monotone" dataKey="total" name="Total" stroke="#1a2332" strokeWidth={2} dot={false} />
+                <ReferenceLine x={ambientC} stroke="#e8ecf1" strokeDasharray="4 4" strokeWidth={2} />
+                <Area type="monotone" dataKey="aero" stackId="1" name="Aerodynamic" fill="#4ea4f6" fillOpacity={0.3} stroke="#4ea4f6" />
+                <Area type="monotone" dataKey="motor" stackId="1" name="Motor I²R" fill="#f0506e" fillOpacity={0.3} stroke="#f0506e" />
+                <Area type="monotone" dataKey="esc_batt" stackId="1" name="ESC + Battery" fill="#f0a030" fillOpacity={0.3} stroke="#f0a030" />
+                <Line type="monotone" dataKey="total" name="Total" stroke="#e8ecf1" strokeWidth={2} dot={false} />
               </AreaChart>
             </ResponsiveContainer>
             <div className="legend-row">
               <div className="legend-item"><div className="legend-dot" style={{ background: '#1a6bff' }} />Aerodynamic (thin air)</div>
-              <div className="legend-item"><div className="legend-dot" style={{ background: '#d6336c' }} />Motor I²R losses</div>
-              <div className="legend-item"><div className="legend-dot" style={{ background: '#c47d0a' }} />ESC + Battery</div>
-              <div className="legend-item"><div className="legend-dot" style={{ background: '#1a2332' }} />Total</div>
+              <div className="legend-item"><div className="legend-dot" style={{ background: '#f0506e' }} />Motor I²R losses</div>
+              <div className="legend-item"><div className="legend-dot" style={{ background: '#f0a030' }} />ESC + Battery</div>
+              <div className="legend-item"><div className="legend-dot" style={{ background: '#e8ecf1' }} />Total</div>
             </div>
           </div>
         </div>
@@ -489,15 +489,15 @@ export default function ComponentPhysicsTab() {
             <p className="chart-subtitle">Percentage of standard-day endurance retained as temperature rises</p>
             <ResponsiveContainer width="100%" height={280}>
               <LineChart data={enduranceCurve} margin={{ left: 10, right: 20, top: 10, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#eef1f5" />
-                <XAxis dataKey="temp" tick={{ fontSize: 11, fill: '#8994a6' }}
-                  label={{ value: 'Ambient °C', position: 'insideBottom', offset: -2, fontSize: 11, fill: '#8994a6' }} />
-                <YAxis domain={[55, 105]} tick={{ fontSize: 11, fill: '#8994a6' }}
-                  label={{ value: '% Retained', angle: -90, position: 'insideLeft', fontSize: 11, fill: '#8994a6' }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#1e2a38" />
+                <XAxis dataKey="temp" tick={{ fontSize: 11, fill: '#556272' }}
+                  label={{ value: 'Ambient °C', position: 'insideBottom', offset: -2, fontSize: 11, fill: '#556272' }} />
+                <YAxis domain={[55, 105]} tick={{ fontSize: 11, fill: '#556272' }}
+                  label={{ value: '% Retained', angle: -90, position: 'insideLeft', fontSize: 11, fill: '#556272' }} />
                 <Tooltip content={<PhysicsTooltip />} />
-                <ReferenceLine x={ambientC} stroke="#1a2332" strokeDasharray="4 4" strokeWidth={2} />
-                <ReferenceLine y={70} stroke="#d6336c" strokeDasharray="3 3" label={{ value: '0.70× floor', position: 'right', fontSize: 10, fill: '#d6336c' }} />
-                <Line type="monotone" dataKey="multiplier" name="Endurance" stroke="#1a6bff" strokeWidth={2.5} dot={false} />
+                <ReferenceLine x={ambientC} stroke="#e8ecf1" strokeDasharray="4 4" strokeWidth={2} />
+                <ReferenceLine y={70} stroke="#f0506e" strokeDasharray="3 3" label={{ value: '0.70× floor', position: 'right', fontSize: 10, fill: '#f0506e' }} />
+                <Line type="monotone" dataKey="multiplier" name="Endurance" stroke="#4ea4f6" strokeWidth={2.5} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -515,7 +515,7 @@ export default function ComponentPhysicsTab() {
                 { temp: 0, text: '30–60 min shade rest before recharging', active: ambientC >= 40 },
               ].map((m, i) => (
                 <div key={i} className={`mitigation-item ${m.active ? 'active' : ''}`}>
-                  <span className="mitigation-dot" style={{ background: m.active ? '#d6336c' : '#e2e6ec' }} />
+                  <span className="mitigation-dot" style={{ background: m.active ? '#f0506e' : '#1e2a38' }} />
                   <span>{m.text}</span>
                 </div>
               ))}
@@ -535,10 +535,10 @@ export default function ComponentPhysicsTab() {
             </p>
             <ResponsiveContainer width="100%" height={360}>
               <BarChart data={materialBars} layout="vertical" margin={{ left: 10, right: 30, top: 5, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#eef1f5" horizontal={false} />
-                <XAxis type="number" domain={[0, 260]} tick={{ fontSize: 11, fill: '#8994a6' }}
-                  label={{ value: 'Temperature (°C)', position: 'insideBottom', offset: -2, fontSize: 11, fill: '#8994a6' }} />
-                <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 11, fill: '#5a6578' }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#1e2a38" horizontal={false} />
+                <XAxis type="number" domain={[0, 260]} tick={{ fontSize: 11, fill: '#556272' }}
+                  label={{ value: 'Temperature (°C)', position: 'insideBottom', offset: -2, fontSize: 11, fill: '#556272' }} />
+                <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 11, fill: '#8a97a8' }} />
                 <Tooltip content={({ active, payload }) => {
                   if (!active || !payload?.length) return null;
                   const d = payload[0].payload as (typeof materialBars)[0];
@@ -552,30 +552,30 @@ export default function ComponentPhysicsTab() {
                       <div className="tt-row"><span>Use</span><span className="tt-val">{d.use}</span></div>
                       <div className="tt-row">
                         <span>Status</span>
-                        <span className="tt-val" style={{ color: d.survives ? '#0d9f6e' : '#d6336c' }}>
+                        <span className="tt-val" style={{ color: d.survives ? '#2dd4a0' : '#f0506e' }}>
                           {d.survives ? 'SURVIVES' : 'FAILS'}
                         </span>
                       </div>
                     </div>
                   );
                 }} />
-                <ReferenceLine x={tarmac} stroke="#d6336c" strokeWidth={2} strokeDasharray="4 4"
-                  label={{ value: `Tarmac ${tarmac}°C`, position: 'top', fontSize: 10, fill: '#d6336c' }} />
+                <ReferenceLine x={tarmac} stroke="#f0506e" strokeWidth={2} strokeDasharray="4 4"
+                  label={{ value: `Tarmac ${tarmac}°C`, position: 'top', fontSize: 10, fill: '#f0506e' }} />
                 <Bar dataKey="barValue" radius={[0, 4, 4, 0]}>
                   {materialBars.map((m, i) => (
                     <Cell key={i}
-                      fill={m.survives ? m.color : '#ef4444'}
+                      fill={m.survives ? m.color : '#f0506e'}
                       fillOpacity={m.survives ? 0.8 : 0.35}
-                      stroke={m.survives ? m.color : '#ef4444'}
+                      stroke={m.survives ? m.color : '#f0506e'}
                       strokeWidth={1} />
                   ))}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
             <div className="legend-row">
-              <div className="legend-item"><div className="legend-dot" style={{ background: '#0d9f6e' }} />Survives tarmac soak</div>
-              <div className="legend-item"><div className="legend-dot" style={{ background: '#ef4444', opacity: 0.35 }} />Fails / Prohibited</div>
-              <div className="legend-item"><div className="legend-dot" style={{ background: '#d6336c' }} />Tarmac temp threshold</div>
+              <div className="legend-item"><div className="legend-dot" style={{ background: '#2dd4a0' }} />Survives tarmac soak</div>
+              <div className="legend-item"><div className="legend-dot" style={{ background: '#f0506e', opacity: 0.35 }} />Fails / Prohibited</div>
+              <div className="legend-item"><div className="legend-dot" style={{ background: '#f0506e' }} />Tarmac temp threshold</div>
             </div>
           </div>
 

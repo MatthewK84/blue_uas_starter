@@ -13,13 +13,13 @@ const MISSIONS = [...new Set(DRONES.map(d => d.mission))].sort();
 function FlightBar({ minutes, max }: { minutes: number; max: number }) {
   const capped = Math.min(minutes, 800);
   const pct = (capped / max) * 100;
-  const color = minutes >= 9999 ? '#0d9f6e'
-    : minutes >= 360 ? '#c47d0a'
-    : minutes >= 120 ? '#1a6bff'
+  const color = minutes >= 9999 ? '#2dd4a0'
+    : minutes >= 360 ? '#f0a030'
+    : minutes >= 120 ? '#4ea4f6'
     : minutes >= 60 ? '#6366f1'
-    : '#a4afc0';
+    : '#556272';
   const bg = minutes >= 9999
-    ? 'repeating-linear-gradient(90deg,#0d9f6e 0px,#0d9f6e 6px,transparent 6px,transparent 10px)'
+    ? 'repeating-linear-gradient(90deg,#2dd4a0 0px,#2dd4a0 6px,transparent 6px,transparent 10px)'
     : `linear-gradient(90deg,${color}cc,${color})`;
   return (
     <div className="flight-bar-track">
@@ -139,7 +139,7 @@ function PerformanceTab() {
       ...d, x: d.hot_speed_mph, y: Math.min(d.hot_endurance_min, 500), z: d.weight_lbs,
     })), []);
 
-  const gColors: Record<number, string> = { 1: '#0d9f6e', 2: '#1a6bff', 3: '#c47d0a' };
+  const gColors: Record<number, string> = { 1: '#2dd4a0', 2: '#4ea4f6', 3: '#f0a030' };
 
   function handleBarClick(data: BarRectangleItem) {
     const payload = data?.payload as Drone | undefined;
@@ -157,7 +157,7 @@ function PerformanceTab() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <GroupBadge group={selectedDrone.group} />
                 <span style={{ fontSize: 18, fontWeight: 700 }}>{selectedDrone.model}</span>
-                <span style={{ fontSize: 12, color: 'var(--text-tertiary)', fontFamily: "'JetBrains Mono', monospace" }}>{selectedDrone.manufacturer}</span>
+                <span style={{ fontSize: 12, color: 'var(--text-tertiary)', fontFamily: "'IBM Plex Mono', monospace" }}>{selectedDrone.manufacturer}</span>
               </div>
             </div>
             <button className="popup-close" onClick={() => setSelectedDrone(null)}>✕ Close</button>
@@ -193,17 +193,17 @@ function PerformanceTab() {
           <p className="chart-subtitle">Click any bar for full specs</p>
           <ResponsiveContainer width="100%" height={520}>
             <BarChart data={enduranceData} layout="vertical" margin={{ left: 10, right: 30, top: 5, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#eef1f5" horizontal={false} />
-              <XAxis type="number" tick={{ fontSize: 11, fill: '#8994a6' }} />
-              <YAxis type="category" dataKey="name" width={120} tick={{ fontSize: 11, fill: '#5a6578' }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#1e2a38" horizontal={false} />
+              <XAxis type="number" tick={{ fontSize: 11, fill: '#556272' }} />
+              <YAxis type="category" dataKey="name" width={120} tick={{ fontSize: 11, fill: '#8a97a8' }} />
               <Tooltip content={<ChartTooltip />} />
-              <Bar dataKey="flight_time_min" name="Standard" fill="#1a6bff" radius={[0, 3, 3, 0]} opacity={0.35} cursor="pointer" onClick={handleBarClick} />
-              <Bar dataKey="hot_endurance_min" name=">45°C" fill="#d6336c" radius={[0, 3, 3, 0]} cursor="pointer" onClick={handleBarClick} />
+              <Bar dataKey="flight_time_min" name="Standard" fill="#4ea4f6" radius={[0, 3, 3, 0]} opacity={0.35} cursor="pointer" onClick={handleBarClick} />
+              <Bar dataKey="hot_endurance_min" name=">45°C" fill="#f0506e" radius={[0, 3, 3, 0]} cursor="pointer" onClick={handleBarClick} />
             </BarChart>
           </ResponsiveContainer>
           <div className="legend-row">
-            <div className="legend-item"><div className="legend-dot" style={{ background: '#1a6bff', opacity: 0.35 }} />Standard</div>
-            <div className="legend-item"><div className="legend-dot" style={{ background: '#d6336c' }} />&gt;45°C</div>
+            <div className="legend-item"><div className="legend-dot" style={{ background: '#4ea4f6', opacity: 0.35 }} />Standard</div>
+            <div className="legend-item"><div className="legend-dot" style={{ background: '#f0506e' }} />&gt;45°C</div>
           </div>
         </div>
       )}
@@ -213,17 +213,17 @@ function PerformanceTab() {
           <p className="chart-subtitle">Click any bar for full specs</p>
           <ResponsiveContainer width="100%" height={460}>
             <BarChart data={rangeData} layout="vertical" margin={{ left: 10, right: 30, top: 5, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#eef1f5" horizontal={false} />
-              <XAxis type="number" tick={{ fontSize: 11, fill: '#8994a6' }} />
-              <YAxis type="category" dataKey="name" width={120} tick={{ fontSize: 11, fill: '#5a6578' }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#1e2a38" horizontal={false} />
+              <XAxis type="number" tick={{ fontSize: 11, fill: '#556272' }} />
+              <YAxis type="category" dataKey="name" width={120} tick={{ fontSize: 11, fill: '#8a97a8' }} />
               <Tooltip content={<ChartTooltip />} />
-              <Bar dataKey="range_mi" name="Standard" fill="#0d9f6e" radius={[0, 3, 3, 0]} opacity={0.35} cursor="pointer" onClick={handleBarClick} />
-              <Bar dataKey="hot_range_mi" name=">45°C" fill="#c47d0a" radius={[0, 3, 3, 0]} cursor="pointer" onClick={handleBarClick} />
+              <Bar dataKey="range_mi" name="Standard" fill="#2dd4a0" radius={[0, 3, 3, 0]} opacity={0.35} cursor="pointer" onClick={handleBarClick} />
+              <Bar dataKey="hot_range_mi" name=">45°C" fill="#f0a030" radius={[0, 3, 3, 0]} cursor="pointer" onClick={handleBarClick} />
             </BarChart>
           </ResponsiveContainer>
           <div className="legend-row">
-            <div className="legend-item"><div className="legend-dot" style={{ background: '#0d9f6e', opacity: 0.35 }} />Standard</div>
-            <div className="legend-item"><div className="legend-dot" style={{ background: '#c47d0a' }} />&gt;45°C</div>
+            <div className="legend-item"><div className="legend-dot" style={{ background: '#2dd4a0', opacity: 0.35 }} />Standard</div>
+            <div className="legend-item"><div className="legend-dot" style={{ background: '#f0a030' }} />&gt;45°C</div>
           </div>
         </div>
       )}
@@ -233,13 +233,13 @@ function PerformanceTab() {
           <p className="chart-subtitle">Bubble size = weight. Click for details.</p>
           <ResponsiveContainer width="100%" height={440}>
             <ScatterChart margin={{ left: 10, right: 30, top: 10, bottom: 10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#eef1f5" />
-              <XAxis type="number" dataKey="x" tick={{ fontSize: 11, fill: '#8994a6' }} label={{ value: 'Hot Speed (mph)', position: 'insideBottom', offset: -4, fontSize: 11, fill: '#8994a6' }} />
-              <YAxis type="number" dataKey="y" tick={{ fontSize: 11, fill: '#8994a6' }} label={{ value: 'Hot Endurance (min)', angle: -90, position: 'insideLeft', fontSize: 11, fill: '#8994a6' }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#1e2a38" />
+              <XAxis type="number" dataKey="x" tick={{ fontSize: 11, fill: '#556272' }} label={{ value: 'Hot Speed (mph)', position: 'insideBottom', offset: -4, fontSize: 11, fill: '#556272' }} />
+              <YAxis type="number" dataKey="y" tick={{ fontSize: 11, fill: '#556272' }} label={{ value: 'Hot Endurance (min)', angle: -90, position: 'insideLeft', fontSize: 11, fill: '#556272' }} />
               <ZAxis type="number" dataKey="z" range={[40, 400]} />
               <Tooltip content={<ChartTooltip />} />
               <Scatter data={scatterData} cursor="pointer" onClick={(data: ScatterPointItem) => { const p = data?.payload as Drone | undefined; if (p?.id) { const dr = DRONES.find(dd => dd.id === p.id); if (dr) setSelectedDrone(dr); } }}>
-                {scatterData.map((d, i) => (<Cell key={i} fill={gColors[d.group] || '#8994a6'} fillOpacity={0.7} stroke={gColors[d.group]} strokeWidth={1} />))}
+                {scatterData.map((d, i) => (<Cell key={i} fill={gColors[d.group] || '#556272'} fillOpacity={0.7} stroke={gColors[d.group]} strokeWidth={1} />))}
               </Scatter>
             </ScatterChart>
           </ResponsiveContainer>
@@ -295,9 +295,9 @@ export default function App() {
   return (
     <div className="app-container">
       <header className="app-header">
-        <div><span className="status-dot" /><span className="status-label">DCMA Blue UAS Cleared List</span></div>
-        <h1>Blue UAS Platform Explorer</h1>
-        <p className="subtitle">Specifications for {DRONES.length} DoD-cleared drone platforms. NDAA-compliant, cyber-secure systems.</p>
+        <div className="header-status"><span className="status-dot" /><span className="status-label">DCMA Blue UAS Cleared List</span></div>
+        <h1><span className="h1-accent">Blue UAS</span> Platform Explorer</h1>
+        <p className="subtitle">{DRONES.length} DoD-cleared drone platforms · NDAA-compliant · Thermal engineering models</p>
       </header>
 
       <div className="tabs">

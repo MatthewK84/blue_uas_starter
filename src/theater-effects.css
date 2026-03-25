@@ -1,0 +1,496 @@
+/* ════════════════════════════════════════════
+ * THEATER EFFECTS TAB STYLES
+ * ════════════════════════════════════════════ */
+
+.te-tab {
+  padding: 0;
+}
+
+.te-tab h2 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 6px 0;
+}
+
+/* ── Theater Preset Bar ── */
+
+.te-theater-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.te-theater-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.te-theater-btn:hover {
+  border-color: var(--accent);
+  background: var(--surface-hover);
+}
+
+.te-theater-btn.active {
+  border-color: var(--accent);
+  background: rgba(78, 164, 246, 0.08);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.te-theater-btn.hot.active {
+  border-color: #f0506e;
+  background: rgba(240, 80, 110, 0.08);
+  box-shadow: 0 0 0 1px #f0506e;
+}
+
+.te-theater-btn.warm.active {
+  border-color: #f0a030;
+  background: rgba(240, 160, 48, 0.08);
+  box-shadow: 0 0 0 1px #f0a030;
+}
+
+.te-theater-name {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.te-theater-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.te-theater-temp {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+}
+
+/* ── Section Content ── */
+
+.te-section-content {
+  animation: fadeUp 0.3s ease both;
+}
+
+/* ── K1000ULE Mission Summary ── */
+
+.te-mission-summary {
+  margin-top: 20px;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.te-mission-summary h3 {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 16px 0;
+}
+
+.te-mission-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.te-phase-card {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  background: var(--bg);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.te-phase-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.te-phase-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.te-phase-name {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.te-phase-time {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent);
+  margin-top: 2px;
+}
+
+.te-phase-note {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 3px;
+  line-height: 1.4;
+}
+
+/* ── Environmental Stressors ── */
+
+.te-status-summary {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.te-status-count {
+  flex: 1;
+  padding: 14px;
+  border-radius: 10px;
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+
+.te-status-count span {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+
+.te-status-count.green {
+  color: #2dd4a0;
+  background: rgba(45, 212, 160, 0.06);
+  border-color: rgba(45, 212, 160, 0.2);
+}
+
+.te-status-count.amber {
+  color: #f0a030;
+  background: rgba(240, 160, 48, 0.06);
+  border-color: rgba(240, 160, 48, 0.2);
+}
+
+.te-status-count.red {
+  color: #f0506e;
+  background: rgba(240, 80, 110, 0.06);
+  border-color: rgba(240, 80, 110, 0.2);
+}
+
+.te-sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.te-sort-label {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-right: 4px;
+}
+
+.te-sort-btn {
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-family: var(--font-display);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.te-sort-btn:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.te-sort-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* ── Stress Cards ── */
+
+.te-stress-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.te-stress-card {
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  cursor: pointer;
+  transition: all 0.2s;
+  animation: fadeUp 0.3s ease both;
+}
+
+.te-stress-card:hover {
+  border-color: var(--border-hover);
+  background: var(--surface-hover);
+}
+
+.te-stress-card.green { border-left: 3px solid #2dd4a0; }
+.te-stress-card.amber { border-left: 3px solid #f0a030; }
+.te-stress-card.red { border-left: 3px solid #f0506e; }
+
+.te-stress-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.te-rating-badge {
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+
+.te-rating-badge.green { background: rgba(45, 212, 160, 0.15); color: #2dd4a0; }
+.te-rating-badge.amber { background: rgba(240, 160, 48, 0.15); color: #f0a030; }
+.te-rating-badge.red { background: rgba(240, 80, 110, 0.15); color: #f0506e; }
+
+.te-stress-identity {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.te-avg-score {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.te-stress-detail {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ── Score Bars ── */
+
+.te-score-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.te-score-label {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.3;
+}
+
+.te-score-track {
+  width: 120px;
+  height: 6px;
+  background: var(--bg);
+  border-radius: 3px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.te-score-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.te-score-val {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  width: 28px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.te-stress-specs {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+}
+
+/* ── Temperature Sweep ── */
+
+.te-sweep-controls {
+  margin-bottom: 16px;
+}
+
+/* ── Heatmap Table ── */
+
+.te-heatmap-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 8px;
+}
+
+.te-heatmap-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  min-width: 800px;
+}
+
+.te-hm-th-platform {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: var(--surface);
+  text-align: left;
+  padding: 8px 12px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+  min-width: 160px;
+}
+
+.te-hm-th-temp {
+  padding: 6px 4px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  border-bottom: 1px solid var(--border);
+  min-width: 48px;
+}
+
+.te-hm-row {
+  transition: background 0.15s;
+}
+
+.te-hm-row:hover {
+  background: var(--surface-hover);
+}
+
+.te-hm-platform {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--surface);
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.te-hm-row:hover .te-hm-platform {
+  background: var(--surface-hover);
+}
+
+.te-hm-model {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.te-hm-mfr {
+  display: block;
+  font-size: 10px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+.te-hm-cell {
+  padding: 5px 4px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+  border-left: 1px solid rgba(255, 255, 255, 0.03);
+  transition: background 0.15s;
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 768px) {
+  .te-theater-bar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .te-status-summary {
+    flex-wrap: wrap;
+  }
+  .te-status-count {
+    flex: 1 1 calc(33% - 8px);
+    min-width: 80px;
+  }
+  .te-score-track {
+    width: 80px;
+  }
+  .te-stress-top {
+    flex-wrap: wrap;
+  }
+  .te-avg-score {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .te-theater-bar {
+    grid-template-columns: 1fr;
+  }
+  .te-mission-grid {
+    gap: 6px;
+  }
+  .te-phase-card {
+    padding: 10px;
+  }
+  .te-stress-specs {
+    gap: 8px;
+  }
+}

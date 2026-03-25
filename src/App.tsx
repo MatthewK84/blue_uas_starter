@@ -7,6 +7,7 @@ import {
 } from 'recharts';
 import ComponentPhysicsTab from './ComponentPhysics';
 import MaterialMatrixTab from './MaterialMatrix';
+import TheaterEffectsTab from './TheaterEffects';
 
 const MISSIONS = [...new Set(DRONES.map(d => d.mission))].sort();
 
@@ -255,7 +256,7 @@ function PerformanceTab() {
 }
 
 export default function App() {
-  const [tab, setTab] = useState<'list' | 'graphics' | 'physics' | 'materials'>('list');
+  const [tab, setTab] = useState<'list' | 'graphics' | 'physics' | 'materials' | 'theater'>('list');
   const [search, setSearch] = useState('');
   const [sortKey, setSortKey] = useState('flight_desc');
   const [filterMission, setFilterMission] = useState('All');
@@ -305,6 +306,7 @@ export default function App() {
         <button className={`tab-btn ${tab === 'graphics' ? 'active' : ''}`} onClick={() => setTab('graphics')}>Hot-Weather Performance</button>
         <button className={`tab-btn ${tab === 'physics' ? 'active' : ''}`} onClick={() => setTab('physics')}>Component Physics</button>
         <button className={`tab-btn ${tab === 'materials' ? 'active' : ''}`} onClick={() => setTab('materials')}>Filament Matrix</button>
+        <button className={`tab-btn ${tab === 'theater' ? 'active' : ''}`} onClick={() => setTab('theater')}>Theater Effects</button>
       </div>
 
       {tab === 'list' && (
@@ -352,6 +354,7 @@ export default function App() {
       {tab === 'graphics' && <PerformanceTab />}
       {tab === 'physics' && <ComponentPhysicsTab />}
       {tab === 'materials' && <MaterialMatrixTab />}
+      {tab === 'theater' && <TheaterEffectsTab />}
 
       <footer className="app-footer">
         Blue UAS Cleared List — DCMA / Defense Innovation Unit<br />
